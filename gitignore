@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+.env/
+
+# Streamlit
+.streamlit/
+
+# VS Code
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Excel exports
+*.xlsx
+*.xls
+
+# PDF exports
+*.pdf
+
+# Temporary files
+*.tmp
+
+# Build
+build/
+dist/
+
+# Cache
+.cache/
+
+# 
