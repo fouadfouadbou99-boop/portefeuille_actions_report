@@ -62,4 +62,92 @@ beta = (
 # ==========================================================
 
 tracking_error_week = active_returns.std(ddof=1)
-tracking_error_ann = 
+tracking_error_ann = tracking_error_week * np.sqrt(WEEKS_PER_YEAR)
+
+# ==========================================================
+# ALPHA ANNUALISE
+# ==========================================================
+
+# Durée observée exprimée en années
+years = n_obs / WEEKS_PER_YEAR
+
+alpha_annualise = (1 + alpha_brut) ** (1 / years) - 1
+
+# ==========================================================
+# INFORMATION RATIO CORRIGE
+# ==========================================================
+
+information_ratio = alpha_annualise / tracking_error_ann
+
+# ==========================================================
+# HIT RATIO
+# ==========================================================
+
+hit_ratio = (active_returns > 0).mean()
+
+# ==========================================================
+# SHARPE SIMPLIFIE
+# (sans taux sans risque)
+# ==========================================================
+
+weekly_mean_port = portfolio_returns.mean()
+weekly_mean_bench = benchmark_returns.mean()
+
+annual_return_port = (1 + weekly_mean_port) ** WEEKS_PER_YEAR - 1
+annual_return_bench = (1 + weekly_mean_bench) ** WEEKS_PER_YEAR - 1
+
+sharpe_port = annual_return_port / vol_ann_port
+sharpe_bench = annual_return_bench / vol_ann_bench
+
+# ==========================================================
+# RESULTATS
+# ==========================================================
+
+results = pd.DataFrame({
+    "Indicateur": [
+        "Nb observations",
+        "Performance absolue Portefeuille",
+        "Performance absolue Indice",
+        "Performance relative (Alpha brut)",
+        "Alpha annualisé",
+        "Volatilité hebdo Portefeuille",
+        "Volatilité hebdo Indice",
+        "Volatilité annualisée Portefeuille",
+        "Volatilité annualisée Indice",
+        "Beta",
+        "Correlation",
+        "Tracking Error hebdo",
+        "Tracking Error annualisé",
+        "Ratio Information corrigé",
+        "Hit Ratio"
+    ],
+    "Valeur": [
+        n_obs,
+        portfolio_perf,
+        benchmark_perf,
+        alpha_brut,
+        alpha_annualise,
+        vol_week_port,
+        vol_week_bench,
+        vol_ann_port,
+        vol_ann_bench,
+        beta,
+        correlation,
+        tracking_error_week,
+        tracking_error_ann,
+        information_ratio,
+        hit_ratio
+    ]
+})
+
+# Formatage
+for idx in results.index:
+    if results.loc[idx, "Indicateur"] not in [
+        "Nb observations",
+        "Beta",
+        "Correlation",
+        "Ratio Information corrigé"
+    ]:
+        results.loc[idx, "Valeur"] = f"{results.loc[idx, 'Valeur']:.2%}"
+
+print(results.to_string(index=False))
